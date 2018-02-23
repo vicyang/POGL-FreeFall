@@ -11,9 +11,9 @@ STDOUT->autoflush(1);
 BEGIN
 {
     our $WinID;
-    our $HEIGHT = 500;
+    our $HEIGHT = 600;
     our $WIDTH  = 800;
-    our ($show_w, $show_h) = (800, 500);
+    our ($show_w, $show_h) = (800, 600);
     our ($half_w, $half_h) = ($show_w/2.0, $show_h/2.0);
 
     # 初速度
@@ -22,11 +22,21 @@ BEGIN
    	our $g = 9.8;
    	our $ta = time();
 
+    #创建随机颜色表
+    our $total = 200;
+    our @colormap;
+    srand(0.5);
+    grep { push @colormap, [ 0.3+rand(0.7), 0.3+rand(0.7), 0.3+rand(0.7) ] } ( 0 .. $total );
+
     our @dots;
-    for ( 0 .. 50 )
+    for ( 0 .. $total )
     {
-        push @dots, Points->new( x => $_ , y => $_  );
+        push @dots, Points->new( x => $_ , y => $_ , right => $show_w, rgb => $colormap[$_] );
     }
+
+    #print join("\n", @{$dots[0]->{rgb}} );
+    #exit;
+
 }
 
 &main();
@@ -43,6 +53,7 @@ sub display
     for my $dot ( @dots )
     {
         ($x, $y) = $dot->curr_pos();
+        glColor3f( @{ $dot->{rgb} } );
         glVertex3f( $x, $y, 0.0);
     }
     glEnd();
@@ -60,7 +71,7 @@ sub init
 {
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
-    glPointSize(2.0);
+    glPointSize(6.0);
 }
 
 sub reshape
@@ -72,7 +83,7 @@ sub reshape
     glViewport(0, 0, $show_w, $show_h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0, $show_w, -$half_h, $half_h, 0.0, $fa*2.0); 
+    glOrtho(0.0, $show_w, -200.0, $show_h-200.0, 0.0, $fa*2.0); 
     #glFrustum(-100.0, $WIDTH-100.0, -100.0, $HEIGHT-100.0, 800.0, $fa*5.0); 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -97,7 +108,7 @@ sub main
     our $MAIN;
 
     glutInit();
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE );
     glutInitWindowSize($WIDTH, $HEIGHT);
     glutInitWindowPosition(100, 100);
     $WinID = glutCreateWindow("Free-fall");
