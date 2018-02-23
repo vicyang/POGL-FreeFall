@@ -12,8 +12,8 @@ BEGIN
 {
     our $WinID;
     our $HEIGHT = 500;
-    our $WIDTH  = 500;
-    our ($show_w, $show_h) = (500,500);
+    our $WIDTH  = 800;
+    our ($show_w, $show_h) = (800, 500);
     our ($half_w, $half_h) = ($show_w/2.0, $show_h/2.0);
 
     # 初速度
@@ -23,7 +23,7 @@ BEGIN
    	our $ta = time();
 
     our @dots;
-    for ( 0 .. 100 )
+    for ( 0 .. 50 )
     {
         push @dots, Points->new( x => $_ , y => $_  );
     }
@@ -69,7 +69,7 @@ sub reshape
     my ($w, $h) = (shift, shift);
     my ($max, $min) = (max($w, $h), min($w, $h) );
 
-    glViewport(0, 0, $min, $min);
+    glViewport(0, 0, $show_w, $show_h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0, $show_w, -$half_h, $half_h, 0.0, $fa*2.0); 
