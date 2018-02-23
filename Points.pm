@@ -16,6 +16,7 @@ sub new
             ys => 15.0 + rand(10.0),
             @_ , 
         };
+        
 	bless $ref, $class;
     return $ref;
 }
