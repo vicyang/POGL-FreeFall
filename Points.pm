@@ -12,8 +12,8 @@ sub new
         {
             id => $id++ ,
             time => time() , 
-            xs => 10.0 + rand(20.0),
-            ys => 50.0 + rand(30.0),
+            xs => 10.0 + rand(5.0),
+            ys => 15.0 + rand(10.0),
             @_ , 
         };
 	bless $ref, $class;
@@ -33,8 +33,8 @@ sub curr_pos
     my ($vx, $vy) = ( $self->{xs}, $self->{ys} );
     my ($x, $y);
 
-    # 时间差 * 5 ，补充，当倍率 = 10，粒子会无限跳动
-    my $t = ( time() - $self->{time} ) * 5;
+    # 时间差 * 2
+    my $t = ( time() - $self->{time} ) * 2;
 
     # y = V0t - 1/2 * gt^2
     $x = $self->{x} + $vx * $t;
@@ -42,14 +42,21 @@ sub curr_pos
 
     if ( $y <= 0.0 )
     {
-        $self->{ys} = -( $self->{ys} - $g * $t ) * (0.6+rand(0.3));  # 动力消减
+        # 反向 + 动力消减
+        $self->{ys} = -( $self->{ys} - $g * $t ) * (0.8+rand(0.1));
         $self->{xs} *= 0.9;
         
         $self->{x} = $x;
         $self->{y} = 0.0;        # y 定位到水平线
+        $y = 0.0;
+
+        if ( abs($self->{ys}) < 2.0) {
+            $self->{ys} = 0.0;
+        }
+        
         $self->{time} = time();  # 更新初始时间
-        if ($self->{id} == 1)
-        {
+
+        if ($self->{id} == 1) {
             printf "%d - %.3f %.3f\n", $self->{id}, $self->{ys}, $t
         }
     }
@@ -58,8 +65,7 @@ sub curr_pos
     {
         $self->{ys} = $self->{ys} - $g * $t;
         $self->{xs} = -$self->{xs} * 0.9;
-
-        $self->{x} = $x;
+        $self->{x} = $x <= 0.0 ? 0.0 : $self->{right};
         $self->{y} = $y;
         $self->{time} = time();  # 更新初始时间
     }

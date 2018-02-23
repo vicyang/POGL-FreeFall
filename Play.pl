@@ -13,7 +13,7 @@ BEGIN
     our $WinID;
     our $HEIGHT = 600;
     our $WIDTH  = 800;
-    our ($show_w, $show_h) = (800, 600);
+    our ($show_w, $show_h) = (100, 60);
     our ($half_w, $half_h) = ($show_w/2.0, $show_h/2.0);
 
     # 初速度
@@ -23,20 +23,24 @@ BEGIN
    	our $ta = time();
 
     #创建随机颜色表
-    our $total = 200;
+    our $total = 100;
     our @colormap;
     srand(0.5);
-    grep { push @colormap, [ 0.3+rand(0.7), 0.3+rand(0.7), 0.3+rand(0.7) ] } ( 0 .. $total );
+    grep { push @colormap, [ 0.3+rand(0.7), 0.3+rand(0.7), 0.3+rand(0.7) ] } ( 0 .. $total*2 );
 
     our @dots;
+    my ($inx, $iny);
+    my ($len, $ang);
     for ( 0 .. $total )
     {
-        push @dots, Points->new( x => $_ , y => $_ , right => $show_w, rgb => $colormap[$_] );
+        ($len, $ang) = ( rand(10.0), rand(6.28) );
+        $inx = $len * sin( $ang ) + 10.0 ;
+        $iny = $len * cos( $ang ) + 10.0 ;
+        push @dots, Points->new( x => $inx, y => $iny , right => $show_w, rgb => $colormap[$_] );
     }
 
     #print join("\n", @{$dots[0]->{rgb}} );
     #exit;
-
 }
 
 &main();
@@ -55,6 +59,7 @@ sub display
         ($x, $y) = $dot->curr_pos();
         glColor3f( @{ $dot->{rgb} } );
         glVertex3f( $x, $y, 0.0);
+        #glVertex3f( $dot->{x}, $dot->{y}, 0.0);
     }
     glEnd();
 
@@ -63,8 +68,17 @@ sub display
 
 sub idle 
 {
+    state $times = 0;
     sleep 0.02;
     glutPostRedisplay();
+
+    $times++;
+    if ( $#dots < 200 )
+    {
+        my ($inx, $iny);
+        my ($len, $ang);
+        push @dots, Points->new( x => 0.0, y => 0.0 , right => $show_w, rgb => $colormap[ $#dots ] );
+    }
 }
 
 sub init
@@ -80,10 +94,10 @@ sub reshape
     my ($w, $h) = (shift, shift);
     my ($max, $min) = (max($w, $h), min($w, $h) );
 
-    glViewport(0, 0, $show_w, $show_h);
+    glViewport(0, 0, $w, $h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0, $show_w, -200.0, $show_h-200.0, 0.0, $fa*2.0); 
+    glOrtho(0.0, $show_w, - $show_h*0.2, $show_h*0.8, 0.0, $fa*2.0); 
     #glFrustum(-100.0, $WIDTH-100.0, -100.0, $HEIGHT-100.0, 800.0, $fa*5.0); 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
