@@ -35,7 +35,7 @@ sub curr_pos
     my ($x, $y);
 
     # 时间差 * 2
-    my $t = ( time() - $self->{time} ) * 2;
+    my $t = ( time() - $self->{time} ) * 2.0;
 
     # y = V0t - 1/2 * gt^2
     $x = $self->{x} + $vx * $t;

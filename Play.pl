@@ -52,7 +52,6 @@ BEGIN
 
     for ( 0 .. $total )
     {
-
         ($len, $ang) = ( rand(20.0), rand(6.28) );
         $inx = $len * sin( $ang ) + 10.0;
         $iny = $len * cos( $ang ) + 10.0;
