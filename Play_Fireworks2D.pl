@@ -75,7 +75,7 @@ sub display
     glEnd();
 
     glAccum(GL_ACCUM, 1.0);
-    glAccum(GL_MULT, 0.95);
+    glAccum(GL_MULT, 0.98);
     glAccum(GL_RETURN, 1.0);
 
     glutSwapBuffers();
@@ -89,8 +89,36 @@ sub idle
     glutPostRedisplay();
 
     $times++;
-    $size *= 0.95 if $size > 1.0;
+    $size *= 0.92 if $size > 1.0;
+    #$size *= 1.01;
     glPointSize( $size );
+
+    if ( $times % 50 == 0 )
+    {
+        $size = 10.0;
+        @dots = ();
+        my ($inx, $iny);
+        my ($len, $ang);
+        my ($vx, $vy);   #速度分量
+
+        $inx = rand($half_w) + $half_w/2.0 ;
+        $iny = rand($half_h) + $half_h/2.0 ;
+        for ( 0 .. $total )
+        {
+            ($len, $ang) = ( rand(20.0), rand(6.28) );
+            $vx = $len * sin( $ang );
+            $vy = $len * cos( $ang );
+
+            push @dots, 
+                    Points->new( 
+                        x => $inx, y => $iny,
+                        xs => $vx, ys => $vy,
+                        right => $show_w, 
+                        rgb => $colormap[$_],
+                        timeply => 1.0,
+                    );
+        }
+    }
 
     # if ( $#dots < 200 )
     # {
