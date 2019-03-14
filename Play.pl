@@ -37,26 +37,9 @@ BEGIN
     {
         $inx = $half_w;
         $iny = $half_h;
-        ($len, $ang) = ( sqrt(rand(1.0)) * 20.0 , rand(6.28) );
+        ($len, $ang) = ( sqrt(rand(1.0)) * 16.0 , rand(6.28) );
         $vx = $len * sin( $ang );
         $vy = $len * cos( $ang );
-
-        push @dots, 
-                Points->new( 
-                    x => $inx, y => $iny,
-                    xs => $vx, ys => $vy,
-                    right => $show_w, 
-                    rgb => $colormap[$_] 
-                );
-    }
-
-    for ( 0 .. $total )
-    {
-        ($len, $ang) = ( sqrt(rand(1.0)) * 20.0 , rand(6.28) );
-        $inx = $len * sin( $ang ) + 10.0;
-        $iny = $len * cos( $ang ) + 10.0;
-        $vx = 10.0 + rand(5.0);
-        $vy = 10.0 + rand(5.0);
 
         push @dots, 
                 Points->new( 
@@ -94,16 +77,9 @@ sub display
 sub idle 
 {
     state $times = 0;
-    sleep 0.02;
+    sleep 0.01;
     glutPostRedisplay();
-
     $times++;
-    # if ( $#dots < 200 )
-    # {
-    #     my ($inx, $iny);
-    #     my ($len, $ang);
-    #     push @dots, Points->new( x => 0.0, y => 0.0 , right => $show_w, rgb => $colormap[ $#dots ] );
-    # }
 }
 
 sub init
